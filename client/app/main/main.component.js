@@ -3,8 +3,11 @@ import uiRouter from 'angular-ui-router';
 import routing from './main.routes';
 
 export class MainController {
-  awesomeThings = [];
-  newThing = '';
+  //awesomeThings = [];
+  //newThing = '';
+  postsFeed = [];
+  newPost = '';
+  reply = false;
 
   /*@ngInject*/
   constructor($http, $scope, socket) {
@@ -12,29 +15,45 @@ export class MainController {
     this.socket = socket;
 
     $scope.$on('$destroy', function() {
-      socket.unsyncUpdates('thing');
+      //socket.unsyncUpdates('thing');
+      socket.unsyncUpdates('post');
     });
   }
 
   $onInit() {
+    //this.$http.get('/api/things')
     this.$http.get('/api/things')
       .then(response => {
-        this.awesomeThings = response.data;
-        this.socket.syncUpdates('thing', this.awesomeThings);
+        this.postsFeed = response.data;
+        //this.socket.syncUpdates('thing', this.awesomeThings);
+        this.socket.syncUpdates('post', this.postsFeed);
       });
   }
 
-  addThing() {
-    if(this.newThing) {
-      this.$http.post('/api/things', {
-        name: this.newThing
+  //addThing() {
+  addPost() {
+    if(this.newPost) {
+      //this.$http.post('/api/things', {
+      this.$http.post('/api/posts', {
+        name: this.newPost
       });
-      this.newThing = '';
+      this.newPost = '';
     }
   }
 
-  deleteThing(thing) {
-    this.$http.delete(`/api/things/${thing._id}`);
+  //deleteThing(thing) {
+  deletePost(post) {
+    //this.$http.delete(`/api/things/${thing._id}`);
+    this.$http.delete(`/api/posts/${post._id}`);
+  }
+
+  likePost(post) {
+
+  }
+
+  replyToPost() {
+    console.log('replying');
+    this.reply = true;
   }
 }
 
@@ -43,5 +62,10 @@ export default angular.module('demoAppApp.main', [uiRouter])
   .component('main', {
     template: require('./main.html'),
     controller: MainController
+  })
+  .filter('reverse', function() {
+    return function(items) {
+      return items.slice().reverse();
+    };
   })
   .name;
