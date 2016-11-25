@@ -1,67 +1,98 @@
+'use strict';
+
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import routing from './main.routes';
 
-export class MainController {
-  //awesomeThings = [];
-  //newThing = '';
-  postsFeed = [];
-  newPost = '';
-  reply = false;
+export class Controller {
+  posts = [];
 
-  /*@ngInject*/
-  constructor($http, $scope, socket) {
-    this.$http = $http;
-    this.socket = socket;
+  constructor(http, auth) {
+    this.http = http;
 
-    $scope.$on('$destroy', function() {
-      //socket.unsyncUpdates('thing');
-      socket.unsyncUpdates('post');
-    });
+    auth
+      .getCurrentUser()
+      .then(user => this.currentUser = user);
   }
 
   $onInit() {
-    //this.$http.get('/api/things')
-    this.$http.get('/api/things')
+    this.http
+      .get('/api/posts')
       .then(response => {
-        this.postsFeed = response.data;
-        //this.socket.syncUpdates('thing', this.awesomeThings);
-        this.socket.syncUpdates('post', this.postsFeed);
+        this.posts = response.data.posts;
+        this.posts.forEach(post => {
+          const { PostLikes } = post;
+          if (PostLikes) {
+            const userLike = PostLikes.find(like => like.UserId === this.currentUser._id);
+            if (userLike) {
+              post.liked = true;
+            }
+          }
+        });
       });
   }
 
-  //addThing() {
-  addPost() {
-    if(this.newPost) {
-      //this.$http.post('/api/things', {
-      this.$http.post('/api/posts', {
-        name: this.newPost
-      });
-      this.newPost = '';
+  addPost(message) {
+    if(message) {
+      this.http
+        .post('/api/posts', { post: { message }})
+        .then(response => {
+          const { data: { post }} = response;
+          post.User = this.currentUser;
+          this.posts.unshift(post);
+          this.newPostMessage = '';
+        })
+        .catch(error => alert(error.data.errors[0].message));
     }
   }
 
-  //deleteThing(thing) {
   deletePost(post) {
-    //this.$http.delete(`/api/things/${thing._id}`);
-    this.$http.delete(`/api/posts/${post._id}`);
+    this.http
+      .delete(`/api/posts/${post._id}`)
+      .then(() => {
+        const position = this.posts.indexOf(post);
+        this.posts.splice(position, 1);
+      });
   }
 
-  likePost(post) {
-
+  replyPost(post, message) {
+    if (message) {
+      this.http
+        .post('/api/posts', { post: { ParentId: post._id, message }})
+        .then(response => {
+          const { data: { post: newPost }} = response;
+          newPost.User = this.currentUser;
+          post.PostReplies = post.PostReplies || [];
+          post.PostReplies.push(newPost);
+          post.replyMessage = '';
+          post.canReply = false;
+        });
+    }
   }
 
-  replyToPost() {
-    console.log('replying');
-    this.reply = true;
+  like(post) {
+    this.http
+      .post(`/api/posts/${ post._id }/like`)
+      .then(response => {
+        const { data: { postLike }} = response;
+        post.PostLikes = post.PostLikes || [];
+        post.PostLikes.push(postLike);
+        post.liked = !postLike.deletedAt;
+      });
   }
+
 }
+
+Controller.$inject = [
+  '$http',
+  'Auth'
+];
 
 export default angular.module('demoAppApp.main', [uiRouter])
   .config(routing)
   .component('main', {
     template: require('./main.html'),
-    controller: MainController
+    controller: Controller
   })
   .filter('reverse', function() {
     return function(items) {

@@ -1,3 +1,12 @@
+<style>
+  .btn.active {
+    color: red;
+  }
+  span.date {
+    font-size: 9px;
+  }
+</style>
+
 <header class="hero-unit" id="banner">
   <div class="container">
     <h1>Glubber</h1>
@@ -6,48 +15,68 @@
 </header>
 
 <div class="container">
-  
-
   <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
-    <form class="post-form">
-      <p class="input-group">
-        <input type="text" class="form-control" placeholder="What's Happening?" ng-model="$ctrl.newPost">
-        <span class="input-group-btn">
-          <button type="submit" class="btn btn-primary" ng-click="$ctrl.addPost()">Glub</button>
-        </span>
-      </p>
-    </form>
-      <ul class="nav nav-tabs nav-stacked well" ng-repeat="post in $ctrl.postsFeed | reverse">
+      <form class="post-form">
+        <p class="input-group">
+          <input type="text" class="form-control" placeholder="What's Happening?" ng-model="$ctrl.newPostMessage">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary" ng-click="$ctrl.addPost($ctrl.newPostMessage)">Glub</button>
+          </span>
+        </p>
+      </form>
+
+      <ul class="nav nav-tabs nav-stacked well" ng-repeat="post in $ctrl.posts">
         <li>
-          <a href="#">{{user.name}}<button type="button" class="close" ng-click="$ctrl.deletePost(post)">&times;</button></a>
+          <button type="button" class="close" ng-click="$ctrl.deletePost(post)">&times;</button>
+
+          <h3>{{ post.User.name }}</h3>
+          <span class="date">{{ post.createdAt | date: 'medium' }}</span>
+
+          <p>{{ post.message }}</p>
+
           <div>
-            <p>{{post.message}}</p>
+            <a
+              class="btn btn-link"
+              ng-class="{ active: post.liked }",
+              ng-click="$ctrl.like(post)">
+              <i class="fa fa-thumbs-o-up"></i>
+              Like
+            </a>
+
+            <a class="btn btn-link" ng-click="post.canReply=true">
+              <i class="fa fa-comment-o"></i>
+              Reply
+            </a>
           </div>
-          <div class="row">
-            <div class="col-lg-4">
-              <div class="row">
-                <a href="#" class="col-lg-6">
-                  <i type="button" class="fa fa-reply" ng-click="$ctrl.replyToPost()"></i>
-                </a>
-                <a href="#" class="col-lg-6 pull-right">
-                  <i type="button" class="fa fa-heart" ng-click=""></i>
-                </a>
-              </div>
+
+          <form ng-submit="$ctrl.replyPost(post, post.replyMessage)" ng-show="post.canReply">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="What's Happening?" ng-model="post.replyMessage">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-success">
+                  <i class="fa fa-send"></i>
+                </button>
+
+                <button class="btn btn-default" ng-click="post.canReply=false">
+                  <i class="fa fa-ban"></i>
+                </button>
+              </span>
             </div>
-          </div>
-          <div class="row" ng-show="$ctrl.reply">
-            <input type="text" class="form-control" placeholder="What's Happening?" ng-model="$ctrl.newPost">
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-primary" ng-click="$ctrl.addPost()">Glub</button>
-            </span>
-          </div>
+          </form>
+
+          <ul class="nav nav-tabs nav-stacked well" ng-if="post.PostReplies.length">
+            <li ng-repeat="reply in post.PostReplies">
+              <strong>{{ reply.User.name }}</strong>
+              <span class="date">{{ reply.createdAt | date: 'medium' }}</span>
+              <p>{{ reply.message }}</p>
+            </li>
+          </ul>
         </li>
       </ul>
     </div>
+
     <div class="col-lg-3"></div>
   </div>
-
-  
 </div>
