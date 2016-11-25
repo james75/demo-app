@@ -18,10 +18,55 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li ng-hide="$ctrl.isLoggedIn()" ui-sref-active="active"><a ui-sref="signup">Sign up</a></li>
-        <li ng-hide="$ctrl.isLoggedIn()" ui-sref-active="active"><a ui-sref="login">Login</a></li>
-        <li ng-show="$ctrl.isLoggedIn()"><p class="navbar-text">Hello {{ $ctrl.getCurrentUser().name }}</p> </li>
-        <li ng-show="$ctrl.isLoggedIn()" ui-sref-active="active"><a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span></a></li>
+        <li ng-hide="$ctrl.isLoggedIn()" ui-sref-active="active">
+          <a ui-sref="signup">Sign up</a>
+        </li>
+
+        <li ng-hide="$ctrl.isLoggedIn()" ui-sref-active="active">
+          <a ui-sref="login">Login</a>
+        </li>
+
+        <li ng-show="$ctrl.isLoggedIn()">
+          <p class="navbar-text">Hello {{ $ctrl.getCurrentUser().name }}</p>
+        </li>
+
+        <li ng-show="$ctrl.isLoggedIn()" ui-sref-active="active">
+          <a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span></a>
+        </li>
+
+        <li ng-show="$ctrl.isLoggedIn()">
+          <div class="btn-group" uib-dropdown is-open="status.isopen">
+            <a
+              uib-dropdown-toggle
+              ng-click="$ctrl.openNotifications()"
+              class="btn btn-link"
+              id="single-button"
+              style="padding:14px;"
+              >
+              <i class="fa fa-globe"></i>
+              <span class="badge" ng-if="$ctrl.meta.new">{{ $ctrl.meta.new }}</span>
+            </a>
+            <ul
+              uib-dropdown-menu
+              ng-if="$ctrl.notifications.length"
+              class="dropdown-menu"
+              role="menu"
+              aria-labelledby="single-button">
+              <li
+                role="menuitem"
+                ng-repeat="notification in $ctrl.notifications">
+                <a class="btn" ng-if="notification.Notifiable === 'Post'">
+                  <strong>{{ notification.User.name }}</strong> posted at {{ notification.createdAt | date: 'medium' }}
+                </a>
+
+                <a class="btn" ng-if="notification.Notifiable === 'PostLike'">
+                  <strong>{{ notification.User.name }}</strong> liked a post at {{ notification.createdAt | date: 'medium' }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+
         <li ng-show="$ctrl.isLoggedIn()"><a ui-sref="logout">Logout</a></li>
       </ul>
     </div>
