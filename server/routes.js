@@ -1,16 +1,14 @@
-/**
- * Main application routes
- */
-
 'use strict';
 
 import errors from './components/errors';
 import path from 'path';
 
 export default function(app) {
-  // Insert routes below
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
+  app.use('/api/posts', require('./api/post'));
+  app.use('/api/postLikes', require('./api/post-like'));
+  app.use('/api/notifications', require('./api/notification'));
 
   app.use('/auth', require('./auth').default);
 
