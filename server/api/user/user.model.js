@@ -41,7 +41,8 @@ export default function(sequelize, DataTypes) {
     facebook: DataTypes.JSON,
     twitter: DataTypes.JSON,
     google: DataTypes.JSON,
-    github: DataTypes.JSON
+    github: DataTypes.JSON,
+    openedNotificationsAt: DataTypes.DATE
 
   }, {
 
