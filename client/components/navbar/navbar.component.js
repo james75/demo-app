@@ -11,34 +11,15 @@ export class NavbarComponent {
 
   isCollapsed = true;
 
-  constructor(http, Auth) {
-    this.http = http;
+  constructor(Auth) {
     this.isLoggedIn = Auth.isLoggedInSync;
     this.isAdmin = Auth.isAdminSync;
     this.getCurrentUser = Auth.getCurrentUserSync;
   }
 
-  $onInit() {
-    this.http
-      .get('/api/notifications')
-      .then(response => {
-        const { meta, notifications } = response.data;
-        this.notifications = notifications;
-        this.meta = meta;
-      });
-  }
-
-  openNotifications() {
-    this.meta.new = 0;
-    this.http.post('/api/notifications/open');
-  }
-
 }
 
-NavbarComponent.$inject = [
-  '$http',
-  'Auth'
-];
+NavbarComponent.$inject = ['Auth'];
 
 export default angular.module('directives.navbar', [])
   .component('navbar', {
