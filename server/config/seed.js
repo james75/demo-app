@@ -23,10 +23,23 @@ const users = [
   }
 ];
 
-User.sync()
-  .then(() => User.destroy({ where: {} }))
-  .then(() =>
-    User
-      .bulkCreate(users)
-      .then(() => console.log('finished populating users'))
-  );
+User
+  .sync()
+  .then(() => {
+    const promises = users.map(user =>
+      User.findOne({
+        where: { email: user.email }
+      })
+      .then(userModel => {
+        if(!userModel) {
+          return User.create(user);
+        }
+      })
+    );
+    Promise.all(promises);
+  })
+  .then(results => {
+    if(results && results.length) {
+      console.log('finished populating users');
+    }
+  });
