@@ -1,0 +1,12 @@
+<div class="like-summary">
+  <i class="fa fa-thumbs-up"></i>
+  <ul class="list-unstyled list-inline">
+    <li ng-if="$ctrl.iLike">
+      <a class="btn-link" ng-click="$ctrl.linkToUser($ctrl.user._id)">You</a>
+    </li>
+
+    <li ng-repeat="postLike in $ctrl.likes" ng-if="$ctrl.likes.length">
+      <a class="btn-link" ng-click="$ctrl.linkToUser(postLike.UserId)">{{postLike.User.name}}</a>
+    </li>
+  </ul>
+</div>

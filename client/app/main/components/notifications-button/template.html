@@ -1,0 +1,32 @@
+<div class="btn-group" uib-dropdown is-open="status.isopen">
+  <a
+    uib-dropdown-toggle
+    ng-click="$ctrl.open()"
+    class="btn btn-link"
+    id="single-button"
+    style="padding:14px;"
+    >
+    <span class="badge" ng-if="$ctrl.meta.new">{{ $ctrl.meta.new }}</span>
+    <i class="fa fa-globe"></i>
+    Notifications
+  </a>
+
+  <ul
+    uib-dropdown-menu
+    ng-if="$ctrl.notifications.length"
+    class="dropdown-menu"
+    role="menu"
+    aria-labelledby="single-button">
+    <li
+      role="menuitem"
+      ng-repeat="notification in $ctrl.notifications">
+      <a class="btn" ng-if="notification.Notifiable === 'Post'">
+        <strong>{{ notification.User.name }}</strong> posted at {{ notification.createdAt | date: 'medium' }}
+      </a>
+
+      <a class="btn" ng-if="notification.Notifiable === 'PostLike'">
+        <strong>{{ notification.User.name }}</strong> liked a post at {{ notification.createdAt | date: 'medium' }}
+      </a>
+    </li>
+  </ul>
+</div>
