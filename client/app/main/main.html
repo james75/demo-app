@@ -9,6 +9,8 @@
   <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
+      <notifications-button></notifications-button>
+
       <form class="post-form" ng-submit="$ctrl.add($ctrl.newPostMessage)">
         <p class="input-group">
           <input type="text" class="form-control" placeholder="What's Happening?" ng-model="$ctrl.newPostMessage">
@@ -46,6 +48,12 @@
               <i class="fa fa-comment-o"></i>
               Reply
             </a>
+
+            <like-summary
+              post-likes="post.PostLikes"
+              user="$ctrl.currentUser"
+              ng-if="post.PostLikes.length">
+            </like-summary>
           </div>
 
           <form ng-submit="$ctrl.reply(post, post.replyMessage)" ng-show="post.canReply">
