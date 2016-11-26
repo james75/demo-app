@@ -9,18 +9,24 @@
   <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
-      <form class="post-form">
+      <form class="post-form" ng-submit="$ctrl.add($ctrl.newPostMessage)">
         <p class="input-group">
           <input type="text" class="form-control" placeholder="What's Happening?" ng-model="$ctrl.newPostMessage">
           <span class="input-group-btn">
-            <button type="submit" class="btn btn-primary" ng-click="$ctrl.addPost($ctrl.newPostMessage)">Glub</button>
+            <button type="submit" class="btn btn-primary">Glub</button>
           </span>
         </p>
       </form>
 
       <ul class="nav nav-tabs nav-stacked well" ng-repeat="post in $ctrl.posts">
         <li>
-          <button type="button" class="close" ng-click="$ctrl.deletePost(post)">&times;</button>
+          <button
+            ng-click="$ctrl.delete(post)"
+            ng-if="$ctrl.currentUser._id === post.UserId"
+            class="close"
+            >
+            &times;
+          </button>
 
           <h3>{{ post.User.name }}</h3>
           <span class="date">{{ post.createdAt | date: 'medium' }}</span>
@@ -42,7 +48,7 @@
             </a>
           </div>
 
-          <form ng-submit="$ctrl.replyPost(post, post.replyMessage)" ng-show="post.canReply">
+          <form ng-submit="$ctrl.reply(post, post.replyMessage)" ng-show="post.canReply">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="What's Happening?" ng-model="post.replyMessage">
               <span class="input-group-btn">

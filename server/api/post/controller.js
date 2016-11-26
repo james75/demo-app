@@ -45,11 +45,14 @@ function create(request, response) {
 }
 
 function destroy(request, response) {
-  const { params: { id }} = request;
+  const { user, params: { id }} = request;
 
   return Post
     .destroy({
-      where: { _id: id }
+      where: {
+        _id: id,
+        UserId: user.get('_id')
+      }
     })
     .then(isDeleted => {
       if(isDeleted) {

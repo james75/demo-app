@@ -34,7 +34,7 @@ export class Controller {
       });
   }
 
-  addPost(message) {
+  add(message) {
     if(message) {
       this.http
         .post('/api/posts', { post: { message }})
@@ -50,16 +50,18 @@ export class Controller {
     }
   }
 
-  deletePost(post) {
+  delete(post) {
     this.http
       .delete(`/api/posts/${post._id}`)
-      .then(() => {
-        const position = this.posts.indexOf(post);
-        this.posts.splice(position, 1);
+      .then(response => {
+        if(response.data.post) {
+          const position = this.posts.indexOf(post);
+          this.posts.splice(position, 1);
+        }
       });
   }
 
-  replyPost(post, message) {
+  reply(post, message) {
     if(message) {
       this.http
         .post('/api/posts', { post: { ParentId: post._id, message }})
