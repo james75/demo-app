@@ -9,7 +9,6 @@ var validatePresenceOf = function(value) {
 
 export default function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
-
     _id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -45,20 +44,13 @@ export default function(sequelize, DataTypes) {
     openedNotificationsAt: DataTypes.DATE
 
   }, {
-
-    /**
-     * Virtual Getters
-     */
     getterMethods: {
-      // Public profile information
       profile() {
         return {
           name: this.name,
           role: this.role
         };
       },
-
-      // Non-sensitive info we'll be putting in the token
       token() {
         return {
           _id: this._id,
@@ -66,10 +58,6 @@ export default function(sequelize, DataTypes) {
         };
       }
     },
-
-    /**
-     * Pre-save hooks
-     */
     hooks: {
       beforeBulkCreate(users, fields, fn) {
         var totalUpdated = 0;
@@ -95,10 +83,6 @@ export default function(sequelize, DataTypes) {
         fn();
       }
     },
-
-    /**
-     * Instance Methods
-     */
     instanceMethods: {
       /**
        * Authenticate - check if the passwords are the same
@@ -113,17 +97,14 @@ export default function(sequelize, DataTypes) {
           return this.password === this.encryptPassword(password);
         }
 
-        var _this = this;
-        this.encryptPassword(password, function(err, pwdGen) {
+        this.encryptPassword(password, (err, pwdGen) => {
           if(err) {
-            callback(err);
+            return callback(err);
           }
-
-          if(_this.password === pwdGen) {
-            callback(null, true);
-          } else {
-            callback(null, false);
+          if(this.password === pwdGen) {
+            return callback(null, true);
           }
+          return callback(null, false);
         });
       },
 
@@ -153,7 +134,7 @@ export default function(sequelize, DataTypes) {
 
         return crypto.randomBytes(byteSize, function(err, salt) {
           if(err) {
-            callback(err);
+            return callback(err);
           }
           return callback(null, salt.toString('base64'));
         });
@@ -177,14 +158,15 @@ export default function(sequelize, DataTypes) {
         var salt = new Buffer(this.salt, 'base64');
 
         if(!callback) {
-          return crypto.pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength)
-                       .toString('base64');
+          return crypto
+            .pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength)
+            .toString('base64');
         }
 
         return crypto.pbkdf2(password, salt, defaultIterations, defaultKeyLength,
           function(err, key) {
             if(err) {
-              callback(err);
+              return callback(err);
             }
             return callback(null, key.toString('base64'));
           });
