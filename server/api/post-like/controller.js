@@ -6,7 +6,7 @@ function index(request, response) {
   const { query: { ids }} = request;
   const where = {};
 
-  if (ids && ids.length) {
+  if(ids && ids.length) {
     where._id = { $in: ids };
   }
 

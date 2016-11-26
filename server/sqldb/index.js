@@ -8,8 +8,7 @@ var db = {
   sequelize: new Sequelize(config.sequelize.uri, config.sequelize.options)
 };
 
-db.Thing = db.sequelize.import('../api/thing/thing.model');
-db.User = db.sequelize.import('../api/user/user.model');
+db.User = db.sequelize.import('../api/user/model');
 
 db.Post = db.sequelize.import('../api/post/model');
 db.Post.belongsTo(db.User);

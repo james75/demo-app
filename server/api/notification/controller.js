@@ -16,11 +16,11 @@ function index(request, response) {
       list = notifications;
       const where = {};
 
-      if (user.get('openedNotificationsAt')) {
+      if(user.get('openedNotificationsAt')) {
         where.createdAt = { $gt: user.get('openedNotificationsAt') };
       }
 
-      return Notification.count({ where })
+      return Notification.count({ where });
     })
     .then(newNotificationsCount => response.json({
       notifications: list,
@@ -28,7 +28,7 @@ function index(request, response) {
     }))
     .catch(error => {
       console.log(error);
-      response.status(422).json(error)
+      response.status(422).json(error);
     });
 }
 

@@ -6,13 +6,13 @@ function index(request, response) {
   const { query: { ids }} = request;
   const where = { ParentId: null };
 
-  if (ids && ids.length) {
+  if(ids && ids.length) {
     where._id = { $in: ids };
   }
 
   return Post
     .findAll({
-      where: where,
+      where,
       order: 'Post.createdAt desc',
       include: [
         User,
@@ -21,7 +21,7 @@ function index(request, response) {
           model: Post,
           as: 'PostReplies',
           separate: true,
-          order: [ ['createdAt', 'asc'] ],
+          order: [['createdAt', 'asc']],
           include: [User]
         }
       ]
@@ -35,12 +35,12 @@ function create(request, response) {
 
   return user
     .createPost(post)
-    .then(post =>
-      post
+    .then(newPost =>
+      newPost
         .createNotification({ UserId: user.get('_id') })
-        .then(() => post)
+        .then(() => newPost)
     )
-    .then(post => response.status(201).json({ post }))
+    .then(newPost => response.status(201).json({ post: newPost }))
     .catch(error => response.status(422).json(error));
 }
 
@@ -51,25 +51,29 @@ function destroy(request, response) {
     .destroy({
       where: { _id: id }
     })
-    .then(isDeleted => isDeleted ? Post.findById(id, { paranoid: false }) : null)
+    .then(isDeleted => {
+      if(isDeleted) {
+        return Post.findById(id, { paranoid: false });
+      }
+    })
     .then(post => response.json({ post }))
     .catch(error => response.status(422).json(error));
 }
 
 function like(request, response) {
   const { user, params: { id }} = request;
-  const postLike = {
+  const newPostLike = {
     PostId: id,
     UserId: user.get('_id')
   };
 
   return PostLike
     .findOrCreate({
-      where: postLike,
-      defaults: postLike
+      where: newPostLike,
+      defaults: newPostLike
     })
     .spread((postLike, isCreated) => {
-      if (isCreated) {
+      if(isCreated) {
         return postLike
           .createNotification({ UserId: user.get('_id') })
           .then(() => postLike);
