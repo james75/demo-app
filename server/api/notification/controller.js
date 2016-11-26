@@ -18,6 +18,7 @@ function index(request, response) {
 
       if(user.get('openedNotificationsAt')) {
         where.createdAt = { $gt: user.get('openedNotificationsAt') };
+        where.UserId = { $ne: user.get('_id') };
       }
 
       return Notification.count({ where });
