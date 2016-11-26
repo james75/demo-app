@@ -29,8 +29,22 @@ import socket from '../components/socket/socket.service';
 
 import './app.scss';
 
-angular.module('demoAppApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io', uiRouter,
-  uiBootstrap, _Auth, account, admin, navbar, footer, main, constants, socket, util
+angular.module('demoAppApp', [
+  ngCookies,
+  ngResource,
+  ngSanitize,
+  'btford.socket-io',
+  uiRouter,
+  uiBootstrap,
+  _Auth,
+  account,
+  admin,
+  navbar,
+  footer,
+  main,
+  constants,
+  socket,
+  util
 ])
   .config(routeConfig)
   .run(function($rootScope, $location, Auth) {

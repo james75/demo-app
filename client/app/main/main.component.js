@@ -12,7 +12,9 @@ export class Controller {
 
     auth
       .getCurrentUser()
-      .then(user => this.currentUser = user);
+      .then(user => {
+        this.currentUser = user;
+      });
   }
 
   $onInit() {
@@ -22,9 +24,9 @@ export class Controller {
         this.posts = response.data.posts;
         this.posts.forEach(post => {
           const { PostLikes } = post;
-          if (PostLikes) {
+          if(PostLikes) {
             const userLike = PostLikes.find(like => like.UserId === this.currentUser._id);
-            if (userLike) {
+            if(userLike) {
               post.liked = true;
             }
           }
@@ -42,7 +44,9 @@ export class Controller {
           this.posts.unshift(post);
           this.newPostMessage = '';
         })
-        .catch(error => alert(error.data.errors[0].message));
+        .catch(error => {
+          alert(error.data.errors[0].message);
+        });
     }
   }
 
@@ -56,7 +60,7 @@ export class Controller {
   }
 
   replyPost(post, message) {
-    if (message) {
+    if(message) {
       this.http
         .post('/api/posts', { post: { ParentId: post._id, message }})
         .then(response => {
@@ -72,7 +76,7 @@ export class Controller {
 
   like(post) {
     this.http
-      .post(`/api/posts/${ post._id }/like`)
+      .post(`/api/posts/${post._id}/like`)
       .then(response => {
         const { data: { postLike }} = response;
         post.PostLikes = post.PostLikes || [];
