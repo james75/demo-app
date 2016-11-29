@@ -1,7 +1,6 @@
 'use strict';
 
 import angular from 'angular';
-// import ngAnimate from 'angular-animate';
 import ngCookies from 'angular-cookies';
 import ngResource from 'angular-resource';
 import ngSanitize from 'angular-sanitize';
@@ -9,8 +8,6 @@ import 'angular-socket-io';
 
 import uiRouter from 'angular-ui-router';
 import uiBootstrap from 'angular-ui-bootstrap';
-// import ngMessages from 'angular-messages';
-// import ngValidationMatch from 'angular-validation-match';
 
 
 import {

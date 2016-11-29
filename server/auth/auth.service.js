@@ -40,6 +40,7 @@ export function isAuthenticated() {
           }
           req.user = user;
           next();
+          return user;
         })
         .catch(err => next(err));
     });

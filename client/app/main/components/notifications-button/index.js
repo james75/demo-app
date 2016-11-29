@@ -3,7 +3,7 @@
 import Controller from './controller';
 
 export default {
-  templateUrl: 'app/main/components/notifications-button/template.html',
+  template: require('./template.html'),
   controller: Controller,
   transclude: true
 };
